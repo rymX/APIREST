@@ -12,8 +12,16 @@ app.use(bodyParser.json());
 
 
 
+
+
 mongoose.connect('mongodb://localhost:27017/apirestdb',
-{ useNewUrlParser: true},()=> console.log('connect to db '));
+{ useNewUrlParser: true ,  useUnifiedTopology: true},
+()=> console.log('connect to db '));
+
+
+
+
+
 
 
 const comptesroute = require('./routes/compts');

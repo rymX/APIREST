@@ -1,5 +1,5 @@
 const express = require('express');
-
+const mongoose = require('mongoose');
 
 const router= express.Router();
 
@@ -24,14 +24,18 @@ router.get('/:comptid',(req,res)=>{
   }
   })
   */
- router.get('/',(req,res)=>{
+ // get all the compts
+ /*
+ router.get('/', async (req,res)=>{
    try{
-     const compts= Compt.find();
+     const compts= await Compt.find();
      res.json(compts);
-   }catch{
+   }catch(err){
      res.json({message:err})
+     console.log(err)
    }
  })
+ */ 
 
 
 router.post('/',(req,res)=>{
@@ -40,7 +44,7 @@ router.post('/',(req,res)=>{
         name : req.body.name,
         lastname: req.body.lastname ,
         email : req.body.email,
-        password : req.body.email,
+        password : req.body.password,
         genre : req.body.genre,
         birthday: req.body.birthday
     });
@@ -53,7 +57,17 @@ router.post('/',(req,res)=>{
 
 
 });
-
+// get a specific compt
+router.get('/name/:name/password/:password', async (req,res)=>{
+  try{
+    const compts= await Compt.find({name:req.params.name , password: req.params.password})
+    res.json(compts);
+  }catch(err){
+    res.json({message:err})
+    console.log(err)
+  }
+ 
+})
 
 
 module.exports =router ;
