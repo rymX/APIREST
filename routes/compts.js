@@ -38,9 +38,9 @@ router.get('/:comptid',(req,res)=>{
  */ 
 
 
-router.post('/',(req,res)=>{
+router.post('/', async (req,res)=>{
 
-    const compt = new Compt({
+    const compt =  new Compt({
         name : req.body.name,
         lastname: req.body.lastname ,
         email : req.body.email,
@@ -49,9 +49,9 @@ router.post('/',(req,res)=>{
         birthday: req.body.birthday
     });
 
-    try{compt.save();
+    try{ await compt.save();
     res.json(compt);
-    } catch {
+    } catch(err) {
       res.json({message : err})
     }
 
@@ -68,6 +68,9 @@ router.get('/name/:name/password/:password', async (req,res)=>{
   }
  
 })
+router.get('/',(req,res)=>{
+  res.send('hello');
+});
 
 
 module.exports =router ;

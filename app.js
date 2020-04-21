@@ -4,6 +4,7 @@ const cors =require('cors');
 
 
 const app=express();
+app.listen(3001);
 app.use(cors())
 
 
@@ -25,5 +26,9 @@ mongoose.connect('mongodb://localhost:27017/apirestdb',
 
 
 const comptesroute = require('./routes/compts');
-app.listen(3000);
 app.use('/compts', comptesroute);
+
+
+const profileroute = require('./routes/profiles');
+app.use('/profiles', profileroute);
+
