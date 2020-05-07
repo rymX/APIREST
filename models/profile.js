@@ -1,4 +1,5 @@
 const mongoose= require('mongoose') ;
+const Compt=require('./compt');
 const profileSchema = mongoose.Schema({
     title:{
         type: String ,
@@ -13,6 +14,10 @@ const profileSchema = mongoose.Schema({
     description:{
         type: String ,
         required : true
+    } ,
+    owner:{
+        type :  mongoose.Schema.Types.ObjectId ,
+       ref : "Compt",
     }
 });
-module.exports= mongoose.model('profile',profileSchema)
+module.exports= mongoose.model('Profile',profileSchema)

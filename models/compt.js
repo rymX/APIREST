@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Profile= require('./profile');
 const comptSchema = mongoose.Schema({
     
     name: {
@@ -11,19 +12,20 @@ const comptSchema = mongoose.Schema({
     },
     email:  {
         type : String,
-        required : true
+        required : true,
+       // unique : true
     },
     password :  {
         type : String,
         required : true
     },
-    genre : {
-        type : String,
-        required:true
-
-    },
-    birthday : {
-        type:Date
-    }
+   
+    
+   // experiences : [
+     // {
+      //   type :  mongoose.Schema.Types.ObjectId ,
+      //     ref : "Profile"
+      //}
+    //]
 });
 module.exports = mongoose.model('Compt', comptSchema)

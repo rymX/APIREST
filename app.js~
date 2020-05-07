@@ -1,0 +1,66 @@
+const express =require('express');
+const mongoose =require('mongoose');
+const cors =require('cors');
+
+
+const app=express();
+app.listen(3001);
+app.use(cors())
+
+
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+
+
+
+
+
+mongoose.connect('mongodb://localhost:27017/apirestdb',
+{ useNewUrlParser: true ,  useUnifiedTopology: true},
+()=> console.log('connect to db '));
+
+
+
+
+
+
+
+const comptesroute = require('./routes/compts');
+app.use('/compts', comptesroute);
+
+
+const profileroute = require('./routes/profiles');
+app.use('/profiles', profileroute);
+
+
+const Compt = require('./models/compt');
+
+const Profile = require('./models/profile')
+/*
+
+const aprofile = new Profile({
+  title:"test",
+        company:"test",
+        startDate:"",
+        endDate:"",
+        description:"test"
+})
+const acompt = new Compt({
+    name :"test",
+        lastname: "test",
+        email : "test@test",
+        password : "test",
+        genre : "test",
+        birthday: ""
+})
+aprofile.save();
+acompt.experiences.push(aprofile);
+acompt.save();
+
+Compt.findOne({})
+.populate('Profile')
+.exec((err, Comment) =>{
+    console.log(Comment)
+})
+*/ 
+
