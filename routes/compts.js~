@@ -72,7 +72,7 @@ router.post('/', async (req,res)=>{
     
 
     const Picture = new ProfilePic({
-      url :"uploads/Thu May 14 2020undraw_female_avatar_w3jk.png" ,
+      url :"Thu May 14 2020undraw_female_avatar_w3jk.png" ,
       owner : compt._id
     });
 
@@ -167,9 +167,8 @@ router.patch('/profilepicture' , upload.single('avatar') , async (req,res) => {
    {owner : req.body.user} ,
    {$set: {url :req.file.path}}
    )
-   const  modifiedPicture = await ProfilePic.find({owner : req.body.user})
 
-    res.json(modifiedPicture);
+    res.json(Picture);
     } catch(err) {
       res.json({message : err})
     }
