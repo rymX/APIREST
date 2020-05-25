@@ -1,6 +1,6 @@
 const express = require('express');
 const router= express.Router();
-
+const bcrypt = require('bcrypt');
 const multer =require('multer') ;
 /* const fileFilter = (req , file , cb ) => {
   if( file.type === 'image/png'){
@@ -63,40 +63,104 @@ const status="" , user={}
 
 router.post('/', async (req,res)=>{
 
-    const compt =  new Compt({
+  Compt.find({email : req.body.email})
+  .select()
+  .exec()
+  .then (user =>{
+    if (user.length >= 1){
+      return  res.status(409).json("mail exist")
+    }
+  
+  
+else {
+
+
+  bcrypt.hash(req.body.password, 10, (err, hash) => {
+    if (err) {
+      return res.status(500).json({
+        error: err
+      });
+    } else {
+
+      const compt =  new Compt({
         name : req.body.name,
         lastname: req.body.lastname ,
         email : req.body.email,
-        password : req.body.password,
+        password : hash
+    });
+    compt.save()
+    .then(result => {
+      res.status(201).json(result);
+
+      const Picture = new ProfilePic({
+        url :"uploads/Thu May 14 2020undraw_female_avatar_w3jk.png" ,
+        owner : result._id
+      });
+      Picture.save()
+
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({
+        error: err
+      });
     });
     
 
-    const Picture = new ProfilePic({
+    }
+  });
+}
+});
+
+    
+   /* const Picture = new ProfilePic({
       url :"uploads/Thu May 14 2020undraw_female_avatar_w3jk.png" ,
       owner : compt._id
     });
-
-   
-
-    try{ await compt.save();
+    try{ await
       Picture.save();
      
-    res.json(compt);
-    res.json(compt2);
-    } catch(err) {
+    res.json(Picture);
+    
+    }
+     catch(err) {
       res.json({message : err})
     }
+    */
 
 
 });
 // get a specific user
 
-router.get('/name/:name/password/:password', async (req,res)=>{
+router.get('/email/:email/password/:password', (req,res)=>{
+  Compt.find({email : req.params.email})
+  .then(result =>{
+    console.log(result);
+    if(result.length < 1) {
+      return res.status(401).json("Auth failed") ;
+     }
+     bcrypt.compare(req.params.password , result[0].password , (err ,responce)=>{
+       if (responce){
+        this.status="logged-in"
+        this.user=result
+        console.log(result) 
+         return res.status(200).json(result) 
+       }
+       else {
+        this.status="not-logged-in"
+        return res.status(401).json("Auth failed") ;
+       }
+      
+     });
+    })
+  .catch(err => {
+    console.log(err)
+  });
+/*
   try{
-    const compts= await Compt.find({name:req.params.name , password: req.params.password})
+    const compts= await Compt.find({email:req.params.email , password: req.params.password})
     res.json(compts)
 
-        //  actualuser = compts ;
    if (compts.length)
 
   {
@@ -115,10 +179,21 @@ router.get('/name/:name/password/:password', async (req,res)=>{
     res.json({message:err})
     console.log(err)
   }
+  */
 
 })
 
-
+router.delete('/delete/userId/:userId', (req,res)=>{
+  Compt.remove({ _id : req.params.userId})
+  .exec()
+  .then(result =>{
+    res.status(200).json("user deleted")
+  })
+  .catch(err=>
+    {
+      res.status(500).json(err);
+    })
+})
 
 router.get('/isLogged' , (req , res)=> {
   req.session.status = this.status
