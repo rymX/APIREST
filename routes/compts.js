@@ -27,44 +27,79 @@ const upload = multer({storage : storage });
 const ProfilePic = require('../models/ProfilePic');
 
 const Compt = require('../models/compt');
-/*
-router.get('/:comptid',(req,res)=>{
-  const compt = Compt.findById(req.param.comptid);
-  res.json(compt);
-})
-*/
 
-/*
-router.get('/:comptid',(req,res)=>{
-  try{
-    const compt= Compt.findById(req.param.comptid);
-    res.json(compt);
 
-  }
-  catch{
-    res.json({message : err})
-  }
-  })
-  localhost:8081/api/companies
- // get all the compts
+// get single user 
+router.get('/:userid',(req,res)=>{
+  
+     Compt.findById(req.params.userid)
+     .select(" _id name lastname email")
+     .exec()
+     .then(user =>  
+      { 
+        if (user){
+          res.status(200).json(user) ;
+        }
+        else {
+         res.status(404).json({message : "No valid entry found for provided ID"})
+        }
 
- router.get('/', async (req,res)=>{
-   try{
-     const compts= await Compt.find();
-     res.json(compts);
-   }catch(err){
-     res.json({message:err})
-     console.log(err)
+
+      
+      })
+      .catch(err =>{
+        Response.status(500).json({Error : err})
+      })
+  
+  });
+  
+
+ // get all the users
+
+ router.get('/',  (req,res)=>{
+   
+   Compt.find()
+   .select("_id name lastname email ")
+   .exec()
+   .then(docs =>{
+   const response  = {
+
+     count : docs.length ,
+     users : docs.map (user => {
+     return {
+       _id : user._id ,
+       name :user.name ,
+       lastname: user.lastname , 
+       email : user.email ,
+       request :{
+         type : "GET" ,
+         url : "http://localhost:3001/compts/" + user._id
+       }
+
+     };
+     })
+
    }
+   if (docs.length>=1){
+    res.status(200).json(response)
+   } 
+   else {
+     res.status(404).json({message : "No entiers founs"})
+   }
+   })
+   
+   .catch(err =>{
+     res.status(500).json({ error : err})
+   })
+     
  })
- /=*/
+ 
 
 const status="" , user={}
-
+// post a user 
 router.post('/', async (req,res)=>{
 
   Compt.find({email : req.body.email})
-  .select()
   .exec()
   .then (user =>{
     if (user.length >= 1){
@@ -103,39 +138,18 @@ else {
       console.log(err);
       res.status(500).json({
         error: err
-      });
-    });
-    
-
-    }
-  });
-}
-});
-
-    
-   /* const Picture = new ProfilePic({
-      url :"uploads/Thu May 14 2020undraw_female_avatar_w3jk.png" ,
-      owner : compt._id
-    });
-    try{ await
-      Picture.save();
-     
-    res.json(Picture);
-    
-    }
-     catch(err) {
-      res.json({message : err})
-    }
-    */
-
-
+               });
+             });
+           }
+        });
+      }
+   });
 });
 // get a specific user
 
 router.get('/email/:email/password/:password', (req,res)=>{
   Compt.find({email : req.params.email})
   .then(result =>{
-    console.log(result);
     if(result.length < 1) {
       return res.status(401).json("Auth failed") ;
      }
@@ -150,48 +164,22 @@ router.get('/email/:email/password/:password', (req,res)=>{
         this.status="not-logged-in"
         return res.status(401).json("Auth failed") ;
        }
-      
      });
     })
   .catch(err => {
     console.log(err)
   });
-/*
-  try{
-    const compts= await Compt.find({email:req.params.email , password: req.params.password})
-    res.json(compts)
-
-   if (compts.length)
-
-  {
-     this.status="logged-in"
-    this.user=compts
-
-
-  }
-  else {
-    this.status="not-logged-in"
-
-  }
-
-
-  }catch(err){
-    res.json({message:err})
-    console.log(err)
-  }
-  */
-
 })
 
 router.delete('/delete/userId/:userId', (req,res)=>{
   Compt.remove({ _id : req.params.userId})
   .exec()
   .then(result =>{
-    res.status(200).json("user deleted")
+    res.status(200).json({message : "user deleted"})
   })
   .catch(err=>
     {
-      res.status(500).json(err);
+      res.status(500).json({error : err});
     })
 })
 
