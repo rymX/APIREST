@@ -56,3 +56,6 @@ app.use('/compts', comptesroute);
 app.use('/profiles', profileroute);
 
 
+app.get('/home', function(req,res){
+    app.render('home');
+})

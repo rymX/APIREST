@@ -57,11 +57,13 @@ router.get('/:userid',(req,res)=>{
  // get all the users
 
  router.get('/',  (req,res)=>{
-   
+
    Compt.find()
    .select("_id name lastname email ")
    .exec()
    .then(docs =>{
+     
+    
    const response  = {
 
      count : docs.length ,
